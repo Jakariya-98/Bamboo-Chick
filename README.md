@@ -1,5 +1,6 @@
 # Bamboo-Chick
-(This is the Project of CSE-412)
+<h2><u><i>Description:</i></u></h2>
 <br>
-<p>Bamboo Chick is a premium interior design and sustainable curtain manufacturer specializing in natural and bamboo window curtains. The website will allow buyers to explore eco-friendly products, customize their shopping experience, place orders, and receive order slips. Sellers will manage orders, products, blogs, stock, and sales reports. </p>
+<p>Bamboo Chick is a website for a premium interior design and sustainable curtain manufacturer. The company makes natural and bamboo window curtains and helps customers choose products for their homes. The website allows buyers, sellers, and the admin to manage their work in one system. The buyer can view different types of bamboo curtains and read a short description about the manufacturer. Buyers can add products to the shopping cart, where the system automatically calculates the total price with taxes. They can also cancel orders, give product reviews, receive an order slip with a delivery date, get customized product recommendations, and view installed curtains in a 3D section before making a purchase. The seller manages customer orders and products. The seller receives generated order slips and cancellation requests, checks customer reviews, writes blogs about products, updates product prices, adds discounts for offers, manages product stock, and views monthly sales reports to monitor business performance. The admin is responsible for the overall website. The admin logs into the system, checks customer reviews, and monitors the complete website to ensure that the system works properly and provides a better experience for users. </p>
+
 

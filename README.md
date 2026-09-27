@@ -6,4 +6,4 @@
 <br>
 <h3><u><i>UML Digram:</i></u></h3>
 <br>
-![Use Case Diagram](https://github.com/Jakariya-98/Bamboo-Chick/blob/main/Bamboo%20Chick(Updated).jpg?raw=true)
+![image alt](https://github.com/Jakariya-98/Bamboo-Chick/blob/main/Bamboo%20Chick(Updated).jpg?raw=true)

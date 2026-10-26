@@ -16,8 +16,13 @@ export default function SellerOrders() {
   const toast = useToast();
 
   const move = async (o, next) => {
-    try { await api.setOrderStatus(o._id, next); toast(`${o.orderNo} → ${next}`); reload(); }
-    catch (e) { toast(e.message); }
+    try { 
+      await api.setOrderStatus(o._id, next); 
+      toast(`${o.orderNo} → ${next}`); 
+      reload(); 
+    } catch (e) { 
+      toast(e.message); 
+    }
   };
 
   return (
@@ -29,17 +34,27 @@ export default function SellerOrders() {
         </select>
       </div>
       <ErrorBox error={error} />
-      {loading ? <Loading /> : (
+      {loading ? <Loading /> : data?.length ? (
         <table>
-          <thead><tr><th>Order</th><th>Customer</th><th>Placed</th><th>Delivery</th><th>Total</th><th>Status</th><th /></tr></thead>
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Customer</th>
+              <th>Placed</th>
+              <th>Delivery</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th />
+            </tr>
+          </thead>
           <tbody>
             {data.map((o) => (
               <tr key={o._id}>
                 <td><b>{o.orderNo}</b></td>
-                <td>{o.customer.name}</td>
+                <td>{o.customer?.name ?? '—'}</td>
                 <td>{date(o.createdAt)}</td>
                 <td>{date(o.deliveryDate)}</td>
-                <td>{tk(o.pricing.total)}</td>
+                <td>{tk(o.pricing?.grandTotal ?? o.pricing?.total ?? 0)}</td>
                 <td><StatusPill status={o.status} /></td>
                 <td>
                   <div className="row" style={{ justifyContent: 'flex-end', flexWrap: 'nowrap' }}>
@@ -52,6 +67,8 @@ export default function SellerOrders() {
             ))}
           </tbody>
         </table>
+      ) : (
+        <p className="muted" style={{ marginTop: '15px' }}>No orders found.</p>
       )}
     </div>
   );

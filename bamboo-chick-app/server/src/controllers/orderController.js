@@ -44,7 +44,7 @@ async function priceItems(rawItems = []) {
       category: product.category,
       sizeKey: size.key,
       sizeLabel: size.label,
-      unitPrice: unitPrice(product.basePrice, size.key),
+      unitPrice: unitPrice(product.basePrice, size.key, product.discountPrice),
       qty
     };
   });

@@ -1,11 +1,3 @@
-/**
- * Pricing rules — the single source of truth for every price shown to buyers.
- *
- * The client never decides a total. It sends items + options and the server
- * calculates (Cart "auto calculator" + "different taxes" user story).
- */
-
-// Standard sizes. Price = product.basePrice × multiplier.
 export const SIZES = [
   { key: '3x5', label: '3×5 ft', multiplier: 1 },
   { key: '4x6', label: '4×6 ft', multiplier: 1.55 },
@@ -21,17 +13,13 @@ export function findSize(sizeKey) {
   return SIZES.find((s) => s.key === sizeKey) || null;
 }
 
-export function unitPrice(basePrice, sizeKey) {
+export function unitPrice(basePrice, sizeKey, discountPrice = null) {
   const size = findSize(sizeKey);
   if (!size) throw new Error(`Unknown size "${sizeKey}"`);
-  return Math.round(basePrice * size.multiplier);
+  const effectiveBase = (discountPrice !== null && discountPrice !== undefined && discountPrice >= 0) ? discountPrice : basePrice;
+  return Math.round(effectiveBase * size.multiplier);
 }
 
-/**
- * @param {Array<{unitPrice:number, qty:number}>} lines   priced cart lines
- * @param {object} settings  Setting document (vatRate, installVatRate, installRate, delivery, discount)
- * @param {{area?:'dhaka'|'outside', installation?:boolean}} options
- */
 export function calculateTotals(lines, settings, { area = 'dhaka', installation = false } = {}) {
   const qty = lines.reduce((a, l) => a + l.qty, 0);
   const subtotal = lines.reduce((a, l) => a + l.unitPrice * l.qty, 0);
@@ -40,9 +28,9 @@ export function calculateTotals(lines, settings, { area = 'dhaka', installation 
   const discountApplies = Boolean(d.active) && qty >= (d.minQty || 0);
   const discount = discountApplies ? subtotal * (d.pct || 0) / 100 : 0;
 
-  const vat = (subtotal - discount) * settings.vatRate / 100;            // VAT on goods
+  const vat = (subtotal - discount) * settings.vatRate / 100;
   const installationFee = installation ? qty * settings.installRate : 0;
-  const installationVat = installationFee * settings.installVatRate / 100; // VAT on service
+  const installationVat = installationFee * settings.installVatRate / 100;
   const delivery = qty ? (settings.delivery?.[area] ?? 0) : 0;
 
   const total = subtotal - discount + vat + installationFee + installationVat + delivery;

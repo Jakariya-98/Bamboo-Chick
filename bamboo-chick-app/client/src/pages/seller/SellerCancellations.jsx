@@ -14,25 +14,37 @@ export default function SellerCancellations() {
       await api.decideCancel(o._id, approve);
       toast(approve ? 'Order cancelled, stock restored' : 'Request rejected');
       reload();
-    } catch (e) { toast(e.message); }
+    } catch (e) { 
+      toast(e.message); 
+    }
   };
 
   return (
     <div className="card pad">
       <h3>Cancellation requests</h3>
       <ErrorBox error={error} />
-      {loading ? <Loading /> : data.length ? data.map((o) => (
-        <div className="rev spread" key={o._id}>
-          <div>
-            <b>{o.orderNo}</b> · {o.customer.name} · {tk(o.pricing.total)}
-            <div className="muted small">Reason: {o.cancelReason || '—'}</div>
+      {loading ? (
+        <Loading />
+      ) : data?.length ? (
+        data.map((o) => (
+          <div className="rev spread" key={o._id}>
+            <div>
+              <b>{o.orderNo}</b> · {o.customer?.name} · {tk(o.pricing?.grandTotal ?? o.pricing?.total ?? 0)}
+              <div className="muted small">Reason: {o.cancelReason || '—'}</div>
+            </div>
+            <div className="row">
+              <button className="btn red sm" onClick={() => decide(o, true)}>
+                Approve
+              </button>
+              <button className="btn ghost sm" onClick={() => decide(o, false)}>
+                Reject
+              </button>
+            </div>
           </div>
-          <div className="row">
-            <button className="btn red sm" onClick={() => decide(o, true)}>Approve</button>
-            <button className="btn ghost sm" onClick={() => decide(o, false)}>Reject</button>
-          </div>
-        </div>
-      )) : <p className="muted">No pending requests.</p>}
+        ))
+      ) : (
+        <p className="muted">No pending requests.</p>
+      )}
     </div>
   );
 }

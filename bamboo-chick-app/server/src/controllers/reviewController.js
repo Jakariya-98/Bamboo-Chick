@@ -9,9 +9,26 @@ export const productReviews = asyncHandler(async (req, res) => {
 });
 
 // POST /api/reviews/product/:productId  (logged-in buyer) { stars, text } — "Give reviews" story
+
 export const addReview = asyncHandler(async (req, res) => {
   const { stars, text } = req.body;
-  if (!(await Product.exists({ _id: req.params.productId }))) throw new ApiError(404, 'Product not found');
+
+  // Check whether the product exists
+  if (!(await Product.exists({ _id: req.params.productId }))) {
+    throw new ApiError(404, 'Product not found');
+  }
+
+  // Check whether this buyer has already reviewed this product
+  const existingReview = await Review.findOne({
+    product: req.params.productId,
+    user: req.user._id
+  });
+
+  if (existingReview) {
+    throw new ApiError(409, 'You have already reviewed this product');
+  }
+
+  // Create the review
   const review = await Review.create({
     product: req.params.productId,
     user: req.user._id,
@@ -19,8 +36,10 @@ export const addReview = asyncHandler(async (req, res) => {
     stars,
     text
   });
+
   res.status(201).json(review);
 });
+
 
 // GET /api/reviews  (seller, admin) — all reviews incl. hidden, "See customer reviews" story
 export const allReviews = asyncHandler(async (_req, res) => {

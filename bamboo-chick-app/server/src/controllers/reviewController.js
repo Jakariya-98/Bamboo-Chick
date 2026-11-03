@@ -9,7 +9,6 @@ export const productReviews = asyncHandler(async (req, res) => {
 });
 
 // POST /api/reviews/product/:productId  (logged-in buyer) { stars, text } — "Give reviews" story
-
 export const addReview = asyncHandler(async (req, res) => {
   const { stars, text } = req.body;
 
@@ -39,7 +38,6 @@ export const addReview = asyncHandler(async (req, res) => {
 
   res.status(201).json(review);
 });
-
 
 // GET /api/reviews  (seller, admin) — all reviews incl. hidden, "See customer reviews" story
 export const allReviews = asyncHandler(async (_req, res) => {

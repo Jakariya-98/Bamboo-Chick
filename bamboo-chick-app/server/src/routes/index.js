@@ -57,7 +57,7 @@ router.get('/manufacturer', manufacturer.getManufacturer);
 router.put('/manufacturer', ...adminOnly, manufacturer.updateManufacturer);
 router.post('/manufacturer/media', ...adminOnly, uploadMedia, manufacturer.addManufacturerMedia);
 router.delete('/manufacturer/media/:mediaId', ...adminOnly, manufacturer.deleteManufacturerMedia);
-router.post('/uploads', ...adminOnly, uploadMedia, upload.uploadFile);
+router.post('/uploads', ...staff, uploadMedia, upload.uploadFile);
 
 /* ---------- Settings (taxes, delivery, discount) ---------- */
 router.get('/settings', settings.getSettings);

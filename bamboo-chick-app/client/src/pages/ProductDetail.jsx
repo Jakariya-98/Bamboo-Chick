@@ -20,11 +20,7 @@ export default function ProductDetail() {
 
   const product = useFetch(() => api.product(id), [id]);
   const reviews = useFetch(() => api.productReviews(id), [id]);
-  
   const [sizeKey, setSizeKey] = useState('3x5');
-  const [customSize, setCustomSize] = useState({ width: 3, height: 5 });
-  const [isCustom, setIsCustom] = useState(false);
-  
   const [form, setForm] = useState({ stars: 5, text: '' });
   const [posting, setPosting] = useState(false);
 
@@ -35,32 +31,10 @@ export default function ProductDetail() {
   const size = settings.sizes.find((s) => s.key === sizeKey) || settings.sizes[0];
   const hasDiscount = p.discountPrice !== null && p.discountPrice !== undefined && p.discountPrice >= 0;
   const effectiveBase = hasDiscount ? p.discountPrice : p.basePrice;
-
-  const calculatePrice = () => {
-    if (isCustom) {
-      const area = (Number(customSize.width) || 1) * (Number(customSize.height) || 1);
-      const standardArea = 15;
-      const customMultiplier = area / standardArea;
-      return Math.round(effectiveBase * customMultiplier);
-    }
-    return Math.round(effectiveBase * size.multiplier);
-  };
-
-  const price = calculatePrice();
-  const currentSizeLabel = isCustom ? `${customSize.width} ft x ${customSize.height} ft (Custom)` : size.label;
-  const currentSizeKey = isCustom ? `custom_${customSize.width}x${customSize.height}` : size.key;
+  const price = Math.round(effectiveBase * size.multiplier);
 
   const addToCart = (goToCart = false) => {
-    cart.add({ 
-      productId: p._id, 
-      name: p.name, 
-      tone: p.tone, 
-      category: p.category, 
-      sizeKey: currentSizeKey, 
-      sizeLabel: currentSizeLabel, 
-      unitPrice: price, 
-      qty: 1 
-    });
+    cart.add({ productId: p._id, name: p.name, tone: p.tone, category: p.category, sizeKey: size.key, sizeLabel: size.label, unitPrice: price, qty: 1 });
     toast('Added to cart');
     if (goToCart) navigate('/cart');
   };
@@ -96,55 +70,13 @@ export default function ProductDetail() {
           <p className="muted">{p.description}</p>
 
           <div className="field">
-            <label>Size Selection</label>
+            <label>Size</label>
             <div className="opt">
-              {settings.sizes.filter(s => s.key !== 'custom').map((s) => (
-                <button 
-                  key={s.key} 
-                  className={!isCustom && size.key === s.key ? 'on' : ''} 
-                  onClick={() => { setSizeKey(s.key); setIsCustom(false); }}
-                >
-                  {s.label}
-                </button>
+              {settings.sizes.map((s) => (
+                <button key={s.key} className={size.key === s.key ? 'on' : ''} onClick={() => setSizeKey(s.key)}>{s.label}</button>
               ))}
-              <button 
-                className={isCustom ? 'on' : ''} 
-                onClick={() => setIsCustom(true)}
-              >
-                Custom Size
-              </button>
             </div>
           </div>
-
-          {isCustom && (
-            <div className="card pad" style={{ marginTop: 10, marginBottom: 16, backgroundColor: 'var(--bg-light)' }}>
-              <h4>Custom Dimensions (in Feet)</h4>
-              <div className="row" style={{ gap: 10, marginTop: 8 }}>
-                <div className="field" style={{ flex: 1 }}>
-                  <label htmlFor="customWidth">Width (ft)</label>
-                  <input 
-                    id="customWidth"
-                    type="number" 
-                    min="1" 
-                    max="50"
-                    value={customSize.width} 
-                    onChange={(e) => setCustomSize({ ...customSize, width: Math.max(1, Number(e.target.value)) })}
-                  />
-                </div>
-                <div className="field" style={{ flex: 1 }}>
-                  <label htmlFor="customHeight">Height (ft)</label>
-                  <input 
-                    id="customHeight"
-                    type="number" 
-                    min="1" 
-                    max="50"
-                    value={customSize.height} 
-                    onChange={(e) => setCustomSize({ ...customSize, height: Math.max(1, Number(e.target.value)) })}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
 
           <div className="bigprice">{tk(price)} <span className="muted small" style={{ fontWeight: 400 }}>+ VAT {settings.vatRate}%</span></div>
           <p className="muted small">
@@ -179,13 +111,7 @@ export default function ProductDetail() {
                   </div>
                   <div className="field">
                     <label htmlFor="rvText">Your experience</label>
-                    <textarea 
-                      id="rvText" 
-                      rows={4} 
-                      maxLength={1000} 
-                      value={form.text} 
-                      onChange={(e) => setForm({ ...form, text: e.target.value })} 
-                    />
+                    <textarea id="rvText" rows={4} maxLength={1000} value={form.text} onChange={(e) => setForm({ ...form, text: e.target.value })} />
                     <p className="muted small">{form.text.length}/1000 characters</p>
                   </div>
                   <button className="btn sm" disabled={posting}>{posting ? 'Posting…' : 'Post review'}</button>

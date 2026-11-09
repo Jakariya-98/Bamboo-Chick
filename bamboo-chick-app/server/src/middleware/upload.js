@@ -2,9 +2,12 @@ import path from 'path';
 import fs from 'fs';
 import { promises as fsp } from 'fs';
 import crypto from 'crypto';
+import { fileURLToPath } from 'url';
 import { ApiError } from '../utils/http.js';
 
-export const uploadDir = path.resolve('uploads');
+// Anchor uploads to this server package so upload and static serving agree
+// regardless of which directory was active when the server was started.
+export const uploadDir = fileURLToPath(new URL('../../uploads/', import.meta.url));
 fs.mkdirSync(uploadDir, { recursive: true });
 
 const allowed = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm', 'video/quicktime']);

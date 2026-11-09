@@ -4,6 +4,7 @@ import useFetch from '../../utils/useFetch.js';
 import { useToast } from '../../context/ToastContext.jsx';
 import BlogCard from '../../components/BlogCard.jsx';
 import Loading, { ErrorBox } from '../../components/Loading.jsx';
+import { mediaUrl } from '../../utils/media.js';
 
 export default function AdminManufacturer() {
   const page = useFetch(() => api.manufacturer(), []);
@@ -82,7 +83,7 @@ export default function AdminManufacturer() {
     <section className="card pad" style={{ marginTop: 18 }}>
       <h2>Published manufacturer media</h2>
       {(page.data?.media || []).length ? <div className="grid g2">{page.data.media.map((item) => <div className="media-admin-card" key={item._id}>
-        {item.type === 'video' ? <video src={item.url} controls /> : <img src={item.url} alt={item.title || 'Bamboo Chick manufacturer'} />}
+        {item.type === 'video' ? <video src={mediaUrl(item.url)} controls /> : <img src={mediaUrl(item.url)} alt={item.title || 'Bamboo Chick manufacturer'} />}
         <div className="spread"><span>{item.title || (item.type === 'video' ? 'Video' : 'Picture')}</span><button type="button" className="btn red sm" onClick={() => removeMedia(item)}>Delete</button></div>
       </div>)}</div> : <p className="muted">No pictures or videos have been uploaded yet.</p>}
     </section>

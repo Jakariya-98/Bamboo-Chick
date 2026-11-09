@@ -1,9 +1,12 @@
 /* Bamboo Chick — global styles (ported from the clickable prototype) */
 :root {
-  --bg: #f6f1e7; --paper: #fffdf8; --ink: #2b2620; --muted: #6f665a; --line: #e3d9c6;
-  --bamboo: #c9a46a; --bamboo-d: #9c7a43; --green: #2f4a3a; --green-l: #e4ece4; --red: #b5483b;
-  --serif: 'Fraunces', Georgia, serif;
-  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Dress Merchant reference palette, adapted to the Bamboo Chick storefront. */
+  --bg: #ffffff; --paper: #ffffff; --ink: #111111; --muted: #767676; --line: #e5e5e5;
+  --bamboo: #ff6900; --bamboo-d: #d95700; --green: #ff6900; --green-l: #fff0e6; --red: #cf2e2e;
+  --primary: #ff6900; --accent: #720eec; --surface: #f4f4f4; --surface-2: #f2f2f2;
+  --serif: 'Nunito Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --sans: 'Nunito Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --shadow: 0 15px 50px 0 rgba(0,0,0,.07);
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
@@ -196,3 +199,81 @@ th { font-size: 12px; text-transform: uppercase; letter-spacing: .4px; color: va
 .blog-cover { display: block; width: 100%; height: 170px; object-fit: cover; background: #e9dfcc; }
 .manufacturer-admin > form .field input[type="file"] { width: 100%; background: var(--paper); }
 @media (max-width: 520px) { .manufacturer-gallery { grid-template-columns: 1fr; } }
+
+/* Dress Merchant inspired storefront refresh. Layout and component behavior stay unchanged. */
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); }
+::selection { background: #720eec; color: #fff; }
+a, button, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid #720eec; outline-offset: 3px; }
+.wrap { max-width: 1200px; }
+header.top { background: rgba(255,255,255,.96); border-bottom-color: #ededed; backdrop-filter: blur(14px); }
+header.top .wrap { min-height: 72px; }
+.logo { font-family: var(--sans); font-size: 21px; font-weight: 900; letter-spacing: -.7px; color: #111; }
+.logo i { width: 27px; height: 27px; border-radius: 8px; background: repeating-linear-gradient(0deg, #ff6900 0 4px, #d95700 4px 5px); }
+nav.main { gap: 5px; }
+nav.main a, nav.main button.linkish { color: #555; border-radius: 999px; padding: 9px 14px; transition: background .2s ease, color .2s ease; }
+nav.main a.active, nav.main a:hover { background: #fff0e6; color: #d95700; }
+nav.main a[href='/login'] { background: #ff6900; color: #fff; padding-inline: 19px; }
+.badge { background: #720eec; }
+main { padding-top: 36px; }
+h1, h2, h3 { font-family: var(--sans); letter-spacing: -.035em; }
+h1 { font-size: clamp(34px, 4.1vw, 52px); font-weight: 900; line-height: 1.08; }
+h2 { font-size: clamp(24px, 2.7vw, 32px); font-weight: 800; }
+h3 { font-weight: 800; }
+.muted { color: #767676; }
+.btn { background: #ff6900; border: 1px solid #ff6900; color: #fff; border-radius: 999px; padding: 11px 21px; font-weight: 800; transition: transform .2s ease, box-shadow .2s ease, background .2s ease; }
+.btn:hover:not(:disabled) { background: #e95d00; border-color: #e95d00; box-shadow: 0 8px 20px #ff690033; transform: translateY(-1px); }
+.btn.ghost { background: #fff; color: #171717; border-color: #dedede; }
+.btn.ghost:hover:not(:disabled) { color: #720eec; border-color: #720eec; box-shadow: none; }
+.btn.sm { padding: 8px 15px; }
+input, select, textarea { border-color: #dedede; border-radius: 8px; background: #fff; }
+input:focus, select:focus, textarea:focus { border-color: #720eec; outline: none; box-shadow: 0 0 0 3px #720eec1c; }
+.opt button, .chip { border-color: #dedede; background: #fff; border-radius: 999px; transition: all .18s ease; }
+.opt button.on { border-color: #720eec; background: #f3eaff; color: #5c0bc4; }
+.chip.on { border-color: #ff6900; background: #ff6900; color: #fff; }
+.card { background: #fff; border: 1px solid #ededed; border-radius: 12px; box-shadow: 0 8px 28px rgba(0,0,0,.035); }
+.pad { padding: 22px; }
+.section { margin: 56px 0; }
+.hero { gap: clamp(24px, 5vw, 64px); margin-bottom: 52px; }
+.hero .pill { background: #fff0e6; color: #bc4a00; letter-spacing: .01em; }
+.hero p { font-size: 17px; line-height: 1.7; }
+.heroart { border-radius: 12px; background: linear-gradient(145deg, #f4f4f4 0%, #e8e8e8 100%); }
+.heroart .blind { box-shadow: 0 18px 38px rgba(0,0,0,.12); }
+.quiz { background: #181818; border-radius: 12px; }
+.quiz .opt button.on { background: #ff6900; border-color: #ff6900; color: #fff; }
+.prod { border-radius: 12px; box-shadow: 0 8px 28px rgba(0,0,0,.04); }
+.prod:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.prod .sw { height: 205px; background-color: #f4f4f4; }
+.sw .tag { background: rgba(255,255,255,.94); color: #444; border-radius: 4px; }
+.price, .bigprice { color: #e95d00; }
+.pdp { gap: clamp(24px, 4vw, 52px); }
+.pdp > div > .card { border-color: #ededed; }
+.stage { border-radius: 12px; background: radial-gradient(ellipse at 50% 30%, #fff, #ededed); }
+.stage .hint3d { color: #767676; }
+.pill { background: #f3eaff; color: #5c0bc4; }
+.pill.amber { background: #fff3dc; color: #8a5c0e; }
+.tabbar { box-shadow: 0 -6px 22px rgba(0,0,0,.04); border-color: #ededed; }
+.tabbar a.active { color: #e95d00; }
+.tabbar a, .tabbar button { color: #666; }
+footer { border-color: #ededed; }
+.side a.active { background: #ff6900; }
+.kpi .n { font-family: var(--sans); }
+.bar .t i { background: #ff6900; }
+.slip { border-color: #ff6900; }
+.toast { border-radius: 999px; background: #171717; }
+.product-actions { display: flex; align-items: center; gap: 6px; }
+.product-actions .btn { white-space: nowrap; }
+.product-file-picker { position: relative; display: inline-flex; margin: 0; color: #5c0bc4; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.product-file-picker span { border: 1px solid #dedede; border-radius: 6px; background: #fff; padding: 6px 8px; }
+.product-file-picker:hover span { border-color: #720eec; }
+.product-file-picker input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.field input[type="file"] { padding: 9px; background: #fff; }
+@media (max-width: 720px) {
+  header.top .wrap { min-height: 62px; }
+  main { padding-top: 24px; padding-bottom: 34px; }
+  .hero { margin-bottom: 34px; }
+  .heroart { height: 270px; }
+  .tabbar { position: fixed; left: 0; right: 0; bottom: 0; padding-bottom: env(safe-area-inset-bottom); }
+  footer { padding-bottom: 82px; }
+}

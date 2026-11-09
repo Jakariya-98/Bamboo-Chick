@@ -1,13 +1,10 @@
 import { Link } from 'react-router-dom';
 import { swatchBg } from '../utils/swatch.js';
 import { tk } from '../utils/format.js';
+import { mediaUrl } from '../utils/media.js';
 
 export default function ProductCard({ product: p }) {
-  const image = p.images?.[0]
-    ? (p.images[0].startsWith('/')
-        ? p.images[0]
-        : `/products/${p.images[0]}`)
-    : null;
+  const image = mediaUrl(p.images?.[0]);
 
   const hasDiscount = p.discountPrice !== null && p.discountPrice !== undefined && p.discountPrice >= 0;
 
@@ -18,6 +15,7 @@ export default function ProductCard({ product: p }) {
           <img
             src={image}
             alt={p.name}
+            onError={(e) => { e.currentTarget.style.display = 'none'; }}
             style={{
               width: '100%',
               height: '100%',

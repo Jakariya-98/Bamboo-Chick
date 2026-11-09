@@ -4,11 +4,16 @@
  */
 const BASE = import.meta.env.VITE_API_URL || '/api';
 const TOKEN_KEY = 'bc_token';
+let memoryToken = null;
+
+// Clear tokens written by older builds that kept the user signed in indefinitely.
+try { localStorage.removeItem(TOKEN_KEY); } catch { /* storage may be unavailable */ }
 
 export const tokenStore = {
-  get: () => { try { return localStorage.getItem(TOKEN_KEY); } catch { return null; } },
-  set: (t) => { try { localStorage.setItem(TOKEN_KEY, t); } catch { /* ignore */ } },
-  clear: () => { try { localStorage.removeItem(TOKEN_KEY); } catch { /* ignore */ } }
+  // Keep the login only for the current page run; a fresh app load starts signed out.
+  get: () => memoryToken,
+  set: (t) => { memoryToken = t; },
+  clear: () => { memoryToken = null; try { localStorage.removeItem(TOKEN_KEY); } catch { /* ignore */ } }
 };
 
 async function request(path, { method = 'GET', body, query } = {}) {
@@ -59,6 +64,7 @@ export const api = {
   product: (id) => request(`/products/${id}`),
   createProduct: (data) => request('/products', { method: 'POST', body: data }),
   updateProduct: (id, data) => request(`/products/${id}`, { method: 'PUT', body: data }),
+  deleteProduct: (id) => request(`/products/${id}`, { method: 'DELETE' }),
   recommend: (answers) => request('/products/recommendations', { method: 'POST', body: answers }),
 
   // reviews

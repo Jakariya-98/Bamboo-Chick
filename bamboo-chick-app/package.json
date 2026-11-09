@@ -1,0 +1,15 @@
+{
+  "name": "bamboo-chick",
+  "private": true,
+  "description": "Bamboo Chick — CSE-412 Team 02 (React client + Express/MongoDB server)",
+  "scripts": {
+    "install:all": "npm install --prefix server && npm install --prefix client",
+    "seed": "npm run seed --prefix server",
+    "dev": "concurrently -n api,web -c green,yellow \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "test": "npm test --prefix server",
+    "build": "npm run build --prefix client"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

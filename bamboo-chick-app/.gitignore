@@ -1,7 +1,32 @@
+# Dependencies and build output
 node_modules/
 dist/
+coverage/
+
+# Environment files — never commit secrets or env config
 .env
+.env.*
 .env.local
-*.log
+*.pem
+*.key
+
+# Locally uploaded media (user content, not source)
+server/uploads/
+uploads/
+
+# Database dumps / exports — data is not part of the source tree
+*.sql
+*.sqlite
+*.sqlite3
+*.bson
+dump/
+backup/
+
+# Archives and OS/editor noise
+*.zip
+*.tar.gz
 .DS_Store
+Thumbs.db
+*.log
 .vscode/
+.idea/

@@ -37,14 +37,14 @@ export const getProduct = asyncHandler(async (req, res) => {
 
 // POST /api/products  (seller, admin)
 export const createProduct = asyncHandler(async (req, res) => {
-  const { name, category, tone, basePrice, stock, description, images, tags } = req.body;
-  const product = await Product.create({ name, category, tone, basePrice, stock, description, images, tags });
+  const { name, category, tone, basePrice, discountPrice, stock, description, images, tags } = req.body;
+  const product = await Product.create({ name, category, tone, basePrice, discountPrice, stock, description, images, tags });
   res.status(201).json(product);
 });
 
 // PUT /api/products/:id  (seller, admin) — "Change price rate" and "Update stock" stories
 export const updateProduct = asyncHandler(async (req, res) => {
-  const allowed = ['name', 'category', 'tone', 'basePrice', 'stock', 'description', 'images', 'tags', 'isActive'];
+  const allowed = ['name', 'category', 'tone', 'basePrice', 'discountPrice', 'stock', 'description', 'images', 'tags', 'isActive'];
   const update = Object.fromEntries(Object.entries(req.body).filter(([k]) => allowed.includes(k)));
   const product = await Product.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true });
   if (!product) throw new ApiError(404, 'Product not found');

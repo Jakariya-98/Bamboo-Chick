@@ -1,3 +1,5 @@
+import { mediaUrl } from './media.js';
+
 /**
  * Generates bamboo-slat backgrounds from a product's tone.
  * Used until real product photos are uploaded — if a product has images[0],
@@ -17,8 +19,9 @@ export function slats(tone = 'natural', w = 7) {
 }
 
 export function swatchBg({ tone, category, images } = {}) {
-  if (images?.length) return `url("${images[0]}") center/cover`;
   const c = TONES[tone] || TONES.natural;
+  if (images?.length) return `url("${mediaUrl(images[0])}") center/cover, ${slats(tone, category === 'Matchstick' ? 3 : 7)}`;
   if (category === 'Door') return `repeating-linear-gradient(90deg,${c[0]} 0 5px,${c[1]} 5px 7px)`;
   return slats(tone, category === 'Matchstick' ? 3 : 7);
 }
+

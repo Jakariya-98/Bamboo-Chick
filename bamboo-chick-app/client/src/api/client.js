@@ -4,11 +4,16 @@
  */
 const BASE = import.meta.env.VITE_API_URL || '/api';
 const TOKEN_KEY = 'bc_token';
+let memoryToken = null;
+
+// Clear tokens written by older builds that kept the user signed in indefinitely.
+try { localStorage.removeItem(TOKEN_KEY); } catch { /* storage may be unavailable */ }
 
 export const tokenStore = {
-  get: () => { try { return localStorage.getItem(TOKEN_KEY); } catch { return null; } },
-  set: (t) => { try { localStorage.setItem(TOKEN_KEY, t); } catch { /* ignore */ } },
-  clear: () => { try { localStorage.removeItem(TOKEN_KEY); } catch { /* ignore */ } }
+  // Keep the login only for the current page run; a fresh app load starts signed out.
+  get: () => memoryToken,
+  set: (t) => { memoryToken = t; },
+  clear: () => { memoryToken = null; try { localStorage.removeItem(TOKEN_KEY); } catch { /* ignore */ } }
 };
 
 async function request(path, { method = 'GET', body, query } = {}) {
@@ -32,6 +37,22 @@ async function request(path, { method = 'GET', body, query } = {}) {
   return data;
 }
 
+async function uploadRequest(path, file, fields = {}) {
+  const form = new FormData();
+  form.append('file', file);
+  Object.entries(fields).forEach(([key, value]) => form.append(key, value));
+  const headers = {};
+  const token = tokenStore.get();
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  let res;
+  try { res = await fetch(BASE + path, { method: 'POST', headers, body: form }); }
+  catch { throw new Error('Cannot reach the server. Is the API running?'); }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || `Upload failed (${res.status})`);
+  return data;
+}
+
 export const api = {
   // auth
   login: (email, password) => request('/auth/login', { method: 'POST', body: { email, password } }),
@@ -43,6 +64,7 @@ export const api = {
   product: (id) => request(`/products/${id}`),
   createProduct: (data) => request('/products', { method: 'POST', body: data }),
   updateProduct: (id, data) => request(`/products/${id}`, { method: 'PUT', body: data }),
+  deleteProduct: (id) => request(`/products/${id}`, { method: 'DELETE' }),
   recommend: (answers) => request('/products/recommendations', { method: 'POST', body: answers }),
 
   // reviews
@@ -60,6 +82,13 @@ export const api = {
   allOrders: (status) => request('/orders', { query: { status } }),
   setOrderStatus: (id, status) => request(`/orders/${id}/status`, { method: 'PATCH', body: { status } }),
   decideCancel: (id, approve) => request(`/orders/${id}/cancel-decision`, { method: 'PATCH', body: { approve } }),
+
+  // manufacturer page
+  manufacturer: () => request('/manufacturer'),
+  updateManufacturer: (data) => request('/manufacturer', { method: 'PUT', body: data }),
+  addManufacturerMedia: (file, title) => uploadRequest('/manufacturer/media', file, { title }),
+  deleteManufacturerMedia: (id) => request(`/manufacturer/media/${id}`, { method: 'DELETE' }),
+  uploadFile: (file) => uploadRequest('/uploads', file),
 
   // blogs
   blogs: () => request('/blogs'),

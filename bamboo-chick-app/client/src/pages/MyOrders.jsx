@@ -18,7 +18,9 @@ export default function MyOrders() {
       await api.requestCancel(o._id, reason);
       toast('Cancellation request sent to seller');
       reload();
-    } catch (e) { toast(e.message); }
+    } catch (e) {
+      toast(e.message);
+    }
   };
 
   return (
@@ -26,22 +28,43 @@ export default function MyOrders() {
       <h1>My orders</h1>
       <p className="muted">Track orders, view your slip, or request a cancellation before it ships.</p>
       <ErrorBox error={error} />
-      {loading ? <Loading /> : data?.length ? (
+      {loading ? (
+        <Loading />
+      ) : data?.length ? (
         <div className="card pad tablewrap">
           <table>
-            <thead><tr><th>Order</th><th>Placed</th><th>Delivery</th><th>Total</th><th>Status</th><th /></tr></thead>
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Placed</th>
+                <th>Delivery</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th />
+              </tr>
+            </thead>
             <tbody>
               {data.map((o) => (
                 <tr key={o._id}>
-                  <td><b>{o.orderNo}</b></td>
+                  <td>
+                    <b>{o.orderNo}</b>
+                  </td>
                   <td>{date(o.createdAt)}</td>
                   <td>{date(o.deliveryDate)}</td>
-                  <td>{tk(o.pricing.total)}</td>
-                  <td><StatusPill status={o.status} /></td>
+                  <td>{tk(o.pricing?.grandTotal ?? o.pricing?.total ?? 0)}</td>
+                  <td>
+                    <StatusPill status={o.status} />
+                  </td>
                   <td>
                     <div className="row" style={{ justifyContent: 'flex-end' }}>
-                      <Link className="btn ghost sm" to={`/orders/${o._id}`}>Slip</Link>
-                      {o.status === 'Pending' && <button className="btn red sm" onClick={() => cancel(o)}>Cancel</button>}
+                      <Link className="btn ghost sm" to={`/orders/${o._id}`}>
+                        Slip
+                      </Link>
+                      {o.status === 'Pending' && (
+                        <button className="btn red sm" onClick={() => cancel(o)}>
+                          Cancel
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -50,7 +73,12 @@ export default function MyOrders() {
           </table>
         </div>
       ) : (
-        <div className="card pad empty"><p className="muted">No orders yet.</p><Link className="btn" to="/shop">Start shopping</Link></div>
+        <div className="card pad empty">
+          <p className="muted">No orders yet.</p>
+          <Link className="btn" to="/shop">
+            Start shopping
+          </Link>
+        </div>
       )}
     </>
   );

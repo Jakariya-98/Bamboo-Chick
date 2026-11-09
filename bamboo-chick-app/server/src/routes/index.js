@@ -7,6 +7,9 @@ import * as reviews from '../controllers/reviewController.js';
 import * as blogs from '../controllers/blogController.js';
 import * as settings from '../controllers/settingController.js';
 import * as reports from '../controllers/reportController.js';
+import * as manufacturer from '../controllers/manufacturerController.js';
+import * as upload from '../controllers/uploadController.js';
+import { uploadMedia } from '../middleware/upload.js';
 
 const router = Router();
 const staff = [protect, authorize('seller', 'admin')];
@@ -48,6 +51,13 @@ router.patch('/reviews/:id/visibility', ...adminOnly, reviews.setVisibility);
 router.get('/blogs', blogs.listBlogs);
 router.post('/blogs', ...staff, blogs.createBlog);
 router.delete('/blogs/:id', ...staff, blogs.deleteBlog);
+
+/* ---------- Manufacturer page ---------- */
+router.get('/manufacturer', manufacturer.getManufacturer);
+router.put('/manufacturer', ...adminOnly, manufacturer.updateManufacturer);
+router.post('/manufacturer/media', ...adminOnly, uploadMedia, manufacturer.addManufacturerMedia);
+router.delete('/manufacturer/media/:mediaId', ...adminOnly, manufacturer.deleteManufacturerMedia);
+router.post('/uploads', ...staff, uploadMedia, upload.uploadFile);
 
 /* ---------- Settings (taxes, delivery, discount) ---------- */
 router.get('/settings', settings.getSettings);

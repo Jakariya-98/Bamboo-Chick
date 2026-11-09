@@ -53,7 +53,7 @@ export default function Home() {
         <div>
           <h2>About the manufacturer</h2>
           <p className="muted">Bamboo Chick is a premium interior design and sustainable curtain manufacturer specialised in natural and bamboo window curtains. We bring eco-conscious elegance to homes and offices through curated products and expert design consultations.</p>
-          <div className="row"><span className="pill">Workshop in Dhaka</span><span className="pill">Free consultation</span></div>
+          <div className="row"><span className="pill">Workshop in Dhaka</span><span className="pill">Free consultation</span><Link className="btn ghost sm" to="/manufacturer">Learn more →</Link></div>
         </div>
       </section>
 

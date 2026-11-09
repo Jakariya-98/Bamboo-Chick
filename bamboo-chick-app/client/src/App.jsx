@@ -11,6 +11,7 @@ import Checkout from './pages/Checkout.jsx';
 import OrderSlip from './pages/OrderSlip.jsx';
 import MyOrders from './pages/MyOrders.jsx';
 import Blog from './pages/Blog.jsx';
+import Manufacturer from './pages/Manufacturer.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import NotFound from './pages/NotFound.jsx';
@@ -27,6 +28,7 @@ import SellerReport from './pages/seller/SellerReport.jsx';
 import AdminLayout from './pages/admin/AdminLayout.jsx';
 import AdminOverview from './pages/admin/AdminOverview.jsx';
 import AdminUsers from './pages/admin/AdminUsers.jsx';
+import AdminManufacturer from './pages/admin/AdminManufacturer.jsx';
 
 const buyer = (el) => <ProtectedRoute roles={['buyer']}>{el}</ProtectedRoute>;
 
@@ -39,6 +41,7 @@ export default function App() {
         <Route path="shop" element={<Shop />} />
         <Route path="product/:id" element={<ProductDetail />} />
         <Route path="blog" element={<Blog />} />
+        <Route path="manufacturer" element={<Manufacturer />} />
         <Route path="cart" element={<Cart />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
@@ -65,6 +68,7 @@ export default function App() {
         <Route path="admin" element={<ProtectedRoute roles={['admin']}><AdminLayout /></ProtectedRoute>}>
           <Route index element={<AdminOverview />} />
           <Route path="reviews" element={<ReviewsTable moderate />} />
+          <Route path="manufacturer" element={<AdminManufacturer />} />
           <Route path="users" element={<AdminUsers />} />
         </Route>
 

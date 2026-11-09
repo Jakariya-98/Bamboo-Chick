@@ -8,9 +8,11 @@ const settings = {
   discount: { active: true, minQty: 3, pct: 10 }
 };
 
-test('size multiplier is applied to base price', () => {
+test('size multiplier is applied to base price and discountPrice', () => {
   assert.equal(unitPrice(2400, '3x5'), 2400);
   assert.equal(unitPrice(2400, '4x6'), 3720);
+  assert.equal(unitPrice(2400, '3x5', 2000), 2000);
+  assert.equal(unitPrice(2400, '4x6', 2000), 3100);
   assert.throws(() => unitPrice(2400, 'huge'));
 });
 

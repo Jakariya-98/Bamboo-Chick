@@ -11,9 +11,9 @@ export default function Layout() {
 
   let links;
   if (role === 'seller') links = [['/seller', 'Dashboard', '▤'], ['/', 'Store', '⌂'], ['/blog', 'Blog', '✎']];
-  else if (role === 'admin') links = [['/admin', 'Admin', '⚙'], ['/', 'Store', '⌂'], ['/shop', 'Shop', '▦']];
+  else if (role === 'admin') links = [['/admin', 'Admin', '⚙'], ['/', 'Store', '⌂'], ['/shop', 'Shop', '▦'], ['/manufacturer', 'Manufacturer', '⚒']];
   else {
-    links = [['/', 'Home', '⌂'], ['/shop', 'Shop', '▦'], ['/blog', 'Blog', '✎']];
+    links = [['/', 'Home', '⌂'], ['/shop', 'Shop', '▦'], ['/manufacturer', 'Manufacturer', '⚒'], ['/blog', 'Blog', '✎']];
     if (user) links.push(['/orders', 'My orders', '☰']);
     links.push(['/cart', 'Cart', '🛒']);
   }

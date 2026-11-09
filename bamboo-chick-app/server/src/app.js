@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import routes from './routes/index.js';
+import { uploadDir } from './middleware/upload.js';
 import { notFound, errorHandler } from './middleware/error.js';
 
 const app = express();
@@ -9,6 +10,9 @@ const app = express();
 app.use(cors({ origin: process.env.CLIENT_URL?.split(',') || true, credentials: true }));
 app.use(express.json({ limit: '1mb' }));
 if (process.env.NODE_ENV !== 'test') app.use(morgan('dev'));
+
+// uploaded manufacturer pictures/videos and blog covers
+app.use('/uploads', express.static(uploadDir));
 
 app.use('/api', routes);
 

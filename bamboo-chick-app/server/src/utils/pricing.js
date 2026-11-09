@@ -21,10 +21,11 @@ export function findSize(sizeKey) {
   return SIZES.find((s) => s.key === sizeKey) || null;
 }
 
-export function unitPrice(basePrice, sizeKey) {
+export function unitPrice(basePrice, sizeKey, discountPrice = null) {
   const size = findSize(sizeKey);
   if (!size) throw new Error(`Unknown size "${sizeKey}"`);
-  return Math.round(basePrice * size.multiplier);
+  const effectiveBase = (discountPrice !== null && discountPrice !== undefined && discountPrice >= 0) ? discountPrice : basePrice;
+  return Math.round(effectiveBase * size.multiplier);
 }
 
 /**

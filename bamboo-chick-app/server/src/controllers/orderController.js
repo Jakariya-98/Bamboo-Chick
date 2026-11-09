@@ -6,12 +6,26 @@ import Counter from '../models/Counter.js';
 import { ApiError, asyncHandler } from '../utils/http.js';
 import { calculateTotals, estimateDeliveryDate, findSize, unitPrice, AREAS } from '../utils/pricing.js';
 
+const MAX_ITEM_LIMIT = 10;
+const MAX_TOTAL_CART_ITEMS = 20;
+
 /**
  * Turns [{ productId, sizeKey, qty }] from the client into priced lines using
  * prices from the DATABASE (never trust prices sent by the browser).
  */
 async function priceItems(rawItems = []) {
   if (!Array.isArray(rawItems) || rawItems.length === 0) throw new ApiError(400, 'Cart is empty');
+
+  let totalCartQuantity = 0;
+  for (const item of rawItems) {
+    const q = Number(item.qty || 0);
+    if (!(q >= 1)) throw new ApiError(400, 'Quantity must be at least 1');
+    totalCartQuantity += q;
+  }
+
+  if (totalCartQuantity > MAX_TOTAL_CART_ITEMS) {
+    throw new ApiError(400, `Total cart items cannot exceed ${MAX_TOTAL_CART_ITEMS} units`);
+  }
 
   const ids = rawItems.map((i) => i.productId).filter((id) => mongoose.isValidObjectId(id));
   const products = await Product.find({ _id: { $in: ids }, isActive: true });
@@ -24,6 +38,9 @@ async function priceItems(rawItems = []) {
     if (!size) throw new ApiError(400, `Unknown size "${i.sizeKey}"`);
     const qty = Math.floor(Number(i.qty));
     if (!(qty >= 1)) throw new ApiError(400, 'Quantity must be at least 1');
+    if (qty > MAX_ITEM_LIMIT) {
+      throw new ApiError(400, `Maximum allowed quantity per item and size is ${MAX_ITEM_LIMIT}`);
+    }
     return {
       product: product._id,
       name: product.name,
@@ -31,7 +48,7 @@ async function priceItems(rawItems = []) {
       category: product.category,
       sizeKey: size.key,
       sizeLabel: size.label,
-      unitPrice: unitPrice(product.basePrice, size.key),
+      unitPrice: unitPrice(product.basePrice, size.key, product.discountPrice),
       qty
     };
   });

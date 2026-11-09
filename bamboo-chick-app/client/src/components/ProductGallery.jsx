@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react';
+import { mediaUrl } from '../utils/media.js';
 
 
 
@@ -8,11 +9,7 @@ export default function ProductGallery({ product }) {
   const [viewerOpen, setViewerOpen] = useState(false);
 
   const images = product?.images?.length
-  ? product.images.map((image) =>
-      image.startsWith('/')
-        ? image
-        : `/products/${image}`
-    )
+  ? product.images.map(mediaUrl)
   : ['/products/IMG_9773.JPG'];
 
   const activeImage = images[activeIndex];

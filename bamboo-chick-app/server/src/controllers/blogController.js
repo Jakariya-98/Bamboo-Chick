@@ -6,11 +6,11 @@ export const listBlogs = asyncHandler(async (_req, res) => {
   res.json(await Blog.find().sort({ createdAt: -1 }).populate('author', 'name'));
 });
 
-// POST /api/blogs  (seller, admin) { title, body, tone, product } — "Add blogs" story
+// POST /api/blogs  (seller, admin) { title, body, tone, product, coverImage } — "Add blogs" story
 export const createBlog = asyncHandler(async (req, res) => {
-  const { title, body, tone, product } = req.body;
+  const { title, body, tone, product, coverImage } = req.body;
   if (!title || !body) throw new ApiError(400, 'Title and content are required');
-  const blog = await Blog.create({ title, body, tone, product: product || undefined, author: req.user._id });
+  const blog = await Blog.create({ title, body, tone, coverImage: coverImage || '', product: product || undefined, author: req.user._id });
   res.status(201).json(blog);
 });
 

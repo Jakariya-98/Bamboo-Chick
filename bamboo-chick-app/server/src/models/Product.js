@@ -9,6 +9,7 @@ const productSchema = new mongoose.Schema(
     category: { type: String, enum: CATEGORIES, required: true },
     tone: { type: String, enum: TONES, default: 'natural' },      // colour, used for swatches + 3D view
     basePrice: { type: Number, required: true, min: 0 },          // price for the 3×5 ft size, in BDT
+    discountPrice: { type: Number, min: 0, default: null },
     stock: { type: Number, required: true, min: 0, default: 0 },
     description: { type: String, default: '' },
     images: [{ type: String }],                                    // image URLs (add real photos later)

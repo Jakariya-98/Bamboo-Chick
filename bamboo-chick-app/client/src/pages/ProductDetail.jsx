@@ -29,7 +29,9 @@ export default function ProductDetail() {
   const p = product.data;
 
   const size = settings.sizes.find((s) => s.key === sizeKey) || settings.sizes[0];
-  const price = Math.round(p.basePrice * size.multiplier);
+  const hasDiscount = p.discountPrice !== null && p.discountPrice !== undefined && p.discountPrice >= 0;
+  const effectiveBase = hasDiscount ? p.discountPrice : p.basePrice;
+  const price = Math.round(effectiveBase * size.multiplier);
 
   const addToCart = (goToCart = false) => {
     cart.add({ productId: p._id, name: p.name, tone: p.tone, category: p.category, sizeKey: size.key, sizeLabel: size.label, unitPrice: price, qty: 1 });
@@ -109,7 +111,7 @@ export default function ProductDetail() {
                   </div>
                   <div className="field">
                     <label htmlFor="rvText">Your experience</label>
-                   <textarea id="rvText" rows={4} maxLength={1000} value={form.text} onChange={(e) => setForm({ ...form, text: e.target.value })} />
+                    <textarea id="rvText" rows={4} maxLength={1000} value={form.text} onChange={(e) => setForm({ ...form, text: e.target.value })} />
                     <p className="muted small">{form.text.length}/1000 characters</p>
                   </div>
                   <button className="btn sm" disabled={posting}>{posting ? 'Posting…' : 'Post review'}</button>

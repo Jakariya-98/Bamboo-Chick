@@ -31,11 +31,6 @@ discounts, blogs and reports; the admin moderates reviews and keeps the whole si
 - Manage the catalogue: add products, set base price, **discount price**, stock, photos and swatches.
 - Run offers (VAT rates, delivery charges, bulk-discount rule), publish blogs, and read the **monthly sales report** and dashboard KPIs (sales, orders, low stock, average rating).
 
-### Admin
-- Log in with role-based access and see a whole-site health panel plus overall revenue, orders, products and buyer counts.
-- Moderate reviews (hide/unhide → 409-guarded one-review-per-buyer rule stays intact).
-- Manage the **Manufacturer page** (title, description, uploaded media) and browse all users.
-
 ---
 
 ## 2. Project structure
@@ -95,37 +90,8 @@ npm run install:all
 npm run dev           # API + client together
 ```
 
-### Demo accounts (created by `npm run seed`)
 
-| Role | Email | Password |
-|---|---|---|
-| Buyer | `buyer@bamboochick.com` | `buyer123` |
-| Seller | `seller@bamboochick.com` | `seller123` |
-| Admin | `admin@bamboochick.com` | `admin123` |
-
-Sign-up at `/register` always creates a **buyer** account.
-
----
-
-## 4. Configuration — environment variables
-
-**No environment file is shipped in this repository** (deliberately: credentials must never be
-committed). Create `bamboo-chick-app/server/.env` yourself with these keys:
-
-| Key | Example | Purpose |
-|---|---|---|
-| `PORT` | `5000` | Port the API listens on |
-| `MONGO_URI` | `mongodb://127.0.0.1:27017/bamboo_chick` | MongoDB connection string (local or Atlas `mongodb+srv://…`) |
-| `JWT_SECRET` | a long random string | Signs login tokens — always change it |
-| `JWT_EXPIRES_IN` | `7d` | Token lifetime |
-| `CLIENT_URL` | `http://localhost:5173` | Allowed CORS origin (comma-separate several) |
-
-The client needs nothing by default (it calls `/api` on the same origin, proxied by Vite in
-development). For a separate API host set `VITE_API_URL=https://<your-api>/api` at build time.
-
----
-
-## 5. Business rules (single source of truth: `server/src/utils/pricing.js`)
+## 4. Business rules (single source of truth: `server/src/utils/pricing.js`)
 
 - **Size multipliers** on the base price: 3×5 → ×1, 4×6 → ×1.55, 5×7 → ×2.2, custom → ×2.6.
 - If a product has a **discount price**, that price is multiplied instead of the base price.
@@ -142,46 +108,8 @@ development). For a separate API host set `VITE_API_URL=https://<your-api>/api` 
 
 ---
 
-## 6. API reference
 
-All routes are prefixed with `/api`. Protected routes need `Authorization: Bearer <token>`.
-
-| Method | Endpoint | Who | Purpose |
-|---|---|---|---|
-| POST | `/auth/register` | public | Create a buyer account → `{ token, user }` |
-| POST | `/auth/login` | public | Log in (any role) → `{ token, user }` |
-| GET | `/auth/me` | logged in | Current user |
-| GET | `/products?category=&q=` | public | List products with rating |
-| GET | `/products/:id` | public | One product |
-| POST | `/products/recommendations` | public | `{ room, need, budget }` → up to 4 products |
-| POST | `/products` | seller, admin | Add a product |
-| PUT | `/products/:id` | seller, admin | Update price, discount price, stock, photos |
-| DELETE | `/products/:id` | seller, admin | Soft delete (hide) |
-| POST | `/orders/quote` | public | `{ items, area, installation }` → price breakdown |
-| POST | `/orders` | buyer | Place an order → order slip |
-| GET | `/orders/my` | buyer | My orders |
-| GET | `/orders/:id` | owner, seller, admin | Order slip |
-| PATCH | `/orders/:id/cancel-request` | buyer | `{ reason }` (only while Pending) |
-| GET | `/orders?status=` | seller, admin | All orders |
-| PATCH | `/orders/:id/status` | seller, admin | `{ status: 'Shipped' \| 'Delivered' }` |
-| PATCH | `/orders/:id/cancel-decision` | seller, admin | `{ approve: true \| false }` |
-| GET | `/reviews/product/:id` | public | Visible reviews |
-| POST | `/reviews/product/:id` | buyer | `{ stars, text }` |
-| GET | `/reviews` | seller, admin | All reviews incl. hidden |
-| PATCH | `/reviews/:id/visibility` | admin | `{ hidden }` |
-| GET / POST | `/blogs` | public / seller, admin | List / publish |
-| DELETE | `/blogs/:id` | seller, admin | Delete |
-| GET / PUT | `/settings` | public / seller, admin | VAT, delivery, installation, discount, sizes |
-| GET / PUT | `/manufacturer` | public / admin | Manufacturer page content |
-| POST / DELETE | `/manufacturer/media` | admin | Add / remove page media |
-| POST | `/uploads` | seller, admin | Upload an image or video |
-| GET | `/reports/monthly?month=YYYY-MM` | seller, admin | Sales per product for a month |
-| GET | `/reports/overview` | seller, admin | Dashboard numbers |
-| GET | `/reports/users` | admin | All users |
-
----
-
-## 7. Data and database
+## 5. Data and database
 
 Mongoose models: **User, Product, Order, Review, Blog, Setting, Counter, Manufacturer**.
 
@@ -193,7 +121,7 @@ Uploaded media is written to `bamboo-chick-app/server/uploads/` and is git-ignor
 
 ---
 
-## 8. Testing
+## 6. Testing
 
 ```bash
 cd bamboo-chick-app/server && npm test    # 5/5 pricing tests
@@ -205,7 +133,7 @@ VAT on goods vs. service, and inside/outside-Dhaka delivery.
 
 ---
 
-## 9. Deployment notes
+## 7. Deployment notes
 
 - `client/public/_redirects` (`/* /index.html 200`) makes client-side routing work on Netlify-style hosts.
 - The client expects the API under `/api` on the same origin (or `VITE_API_URL`).

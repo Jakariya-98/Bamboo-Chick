@@ -58,6 +58,7 @@ export const api = {
   login: (email, password) => request('/auth/login', { method: 'POST', body: { email, password } }),
   register: (data) => request('/auth/register', { method: 'POST', body: data }),
   me: () => request('/auth/me'),
+    updateProfile: (data) => request('/auth/profile', { method: 'PUT', body: data }),
 
   // products
   products: (query) => request('/products', { query }),

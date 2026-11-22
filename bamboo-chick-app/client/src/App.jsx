@@ -15,6 +15,7 @@ import Manufacturer from './pages/Manufacturer.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import NotFound from './pages/NotFound.jsx';
+import Profile from './pages/Profile.jsx';
 
 import SellerLayout from './pages/seller/SellerLayout.jsx';
 import SellerOverview from './pages/seller/SellerOverview.jsx';
@@ -49,6 +50,8 @@ export default function App() {
         {/* Buyer */}
         <Route path="checkout" element={buyer(<Checkout />)} />
         <Route path="orders" element={buyer(<MyOrders />)} />
+        <Route path="orders" element={buyer(<MyOrders />)} />
+        <Route path="profile" element={buyer(<Profile />)} />
         {/* Order slip: buyer (own orders), seller and admin */}
         <Route path="orders/:id" element={<ProtectedRoute><OrderSlip /></ProtectedRoute>} />
 

@@ -28,3 +28,26 @@ export const login = asyncHandler(async (req, res) => {
 export const me = asyncHandler(async (req, res) => {
   res.json({ user: req.user });
 });
+
+// PUT /api/auth/profile
+export const updateProfile = asyncHandler(async (req, res) => {
+  const { name, phone, address } = req.body;
+
+  if (!name || !name.trim()) {
+    throw new ApiError(400, 'Name is required');
+  }
+
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    throw new ApiError(404, 'User not found');
+  }
+
+  user.name = name.trim();
+  user.phone = phone?.trim() || '';
+  user.address = address?.trim() || '';
+
+  await user.save();
+
+  res.json({ user });
+});

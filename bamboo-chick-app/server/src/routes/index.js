@@ -22,6 +22,7 @@ router.get('/health', (_req, res) => res.json({ ok: true, service: 'bamboo-chick
 router.post('/auth/register', auth.register);
 router.post('/auth/login', auth.login);
 router.get('/auth/me', protect, auth.me);
+router.put('/auth/profile', ...buyer, auth.updateProfile);
 
 /* ---------- Products ---------- */
 router.get('/products', products.listProducts);

@@ -18,6 +18,7 @@ export default function Layout() {
   else {
     links = [['/', 'Home', '⌂'], ['/shop', 'Shop', '▦'], ['/manufacturer', 'Manufacturer', '⚒'], ['/blog', 'Blog', '✎']];
     if (user) links.push(['/orders', 'My orders', '☰']);
+    if (user?.role === 'buyer') links.push(['/profile', 'My profile', '👤']);
     links.push(['/cart', 'Cart', '🛒']);
   }
 
@@ -28,6 +29,7 @@ export default function Layout() {
   else {
     navLinks = [['/shop', 'Collection'], ['/manufacturer', 'Our craft'], ['/blog', 'Journal']];
     if (user) navLinks.push(['/orders', 'My orders']);
+    if (user?.role === 'buyer') navLinks.push(['/profile', 'My profile']);
   }
   const showBag = role !== 'seller' && role !== 'admin';
 

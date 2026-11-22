@@ -15,6 +15,7 @@ import Manufacturer from './pages/Manufacturer.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import NotFound from './pages/NotFound.jsx';
+import BlogDetail from './pages/BlogDetail.jsx';
 
 import SellerLayout from './pages/seller/SellerLayout.jsx';
 import SellerOverview from './pages/seller/SellerOverview.jsx';
@@ -41,6 +42,7 @@ export default function App() {
         <Route path="shop" element={<Shop />} />
         <Route path="product/:id" element={<ProductDetail />} />
         <Route path="blog" element={<Blog />} />
+        <Route path="blog/:id" element={<BlogDetail />} />
         <Route path="manufacturer" element={<Manufacturer />} />
         <Route path="cart" element={<Cart />} />
         <Route path="login" element={<Login />} />

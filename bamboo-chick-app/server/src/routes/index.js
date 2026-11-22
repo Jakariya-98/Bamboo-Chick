@@ -50,6 +50,7 @@ router.patch('/reviews/:id/visibility', ...adminOnly, reviews.setVisibility);
 /* ---------- Blogs ---------- */
 router.get('/blogs', blogs.listBlogs);
 router.post('/blogs', ...staff, blogs.createBlog);
+router.put('/blogs/:id', ...staff, blogs.updateBlog);
 router.delete('/blogs/:id', ...staff, blogs.deleteBlog);
 
 /* ---------- Manufacturer page ---------- */

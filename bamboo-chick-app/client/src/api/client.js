@@ -91,9 +91,10 @@ export const api = {
   uploadFile: (file) => uploadRequest('/uploads', file),
 
   // blogs
-  blogs: () => request('/blogs'),
-  createBlog: (data) => request('/blogs', { method: 'POST', body: data }),
-  deleteBlog: (id) => request(`/blogs/${id}`, { method: 'DELETE' }),
+blogs: () => request('/blogs'),
+createBlog: (data) => request('/blogs', { method: 'POST', body: data }),
+updateBlog: (id, data) => request(`/blogs/${id}`, { method: 'PUT', body: data }),
+deleteBlog: (id) => request(`/blogs/${id}`, { method: 'DELETE' }),
 
   // settings
   settings: () => request('/settings'),

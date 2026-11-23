@@ -6,6 +6,7 @@ import ReviewsTable from './components/ReviewsTable.jsx';
 import Home from './pages/Home.jsx';
 import Shop from './pages/Shop.jsx';
 import ProductDetail from './pages/ProductDetail.jsx';
+import CustomizeOrder from './pages/CustomizeOrder.jsx';
 import Cart from './pages/Cart.jsx';
 import Checkout from './pages/Checkout.jsx';
 import OrderSlip from './pages/OrderSlip.jsx';
@@ -40,6 +41,8 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="shop" element={<Shop />} />
         <Route path="product/:id" element={<ProductDetail />} />
+        <Route path="customize" element={<CustomizeOrder />} />
+        <Route path="customize/:id" element={<CustomizeOrder />} />
         <Route path="blog" element={<Blog />} />
         <Route path="manufacturer" element={<Manufacturer />} />
         <Route path="cart" element={<Cart />} />

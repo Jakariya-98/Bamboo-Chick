@@ -1,4 +1,5 @@
-import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, NavLink, Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
 
@@ -8,25 +9,54 @@ export default function Layout() {
   const { count } = useCart();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const [searchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
+
   const role = user?.role;
   const isHome = pathname === '/';
 
-  // Phone tab bar (icons) — unchanged behaviour
+  // Sync header search input with URL query
+  useEffect(() => {
+    setSearchTerm(searchParams.get('q') || '');
+  }, [searchParams]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const trimmed = searchTerm.trim();
+    if (trimmed) {
+      navigate(`/shop?q=${encodeURIComponent(trimmed)}`);
+    } else {
+      navigate('/shop');
+    }
+  };
+
+  // Phone tab bar (icons)
   let links;
   if (role === 'seller') links = [['/seller', 'Dashboard', '▤'], ['/', 'Store', '⌂'], ['/blog', 'Blog', '✎']];
   else if (role === 'admin') links = [['/admin', 'Admin', '⚙'], ['/', 'Store', '⌂'], ['/shop', 'Shop', '▦'], ['/manufacturer', 'Manufacturer', '⚒']];
   else {
-    links = [['/', 'Home', '⌂'], ['/shop', 'Shop', '▦'], ['/manufacturer', 'Manufacturer', '⚒'], ['/blog', 'Blog', '✎']];
+    links = [
+      ['/', 'Home', '⌂'],
+      ['/shop', 'Shop', '▦'],
+      ['/customize', 'Customize', '✂'],
+      ['/manufacturer', 'Manufacturer', '⚒'],
+      ['/blog', 'Blog', '✎'],
+    ];
     if (user) links.push(['/orders', 'My orders', '☰']);
     links.push(['/cart', 'Cart', '🛒']);
   }
 
-  // Desktop header links (same destinations, labelled as in the design)
+  // Desktop header links
   let navLinks;
   if (role === 'seller') navLinks = [['/seller', 'Dashboard'], ['/', 'Store'], ['/blog', 'Journal']];
   else if (role === 'admin') navLinks = [['/admin', 'Admin'], ['/', 'Store'], ['/shop', 'Collection'], ['/manufacturer', 'Our craft']];
   else {
-    navLinks = [['/shop', 'Collection'], ['/manufacturer', 'Our craft'], ['/blog', 'Journal']];
+    navLinks = [
+      ['/shop', 'Collection'],
+      ['/customize', 'Customize'],
+      ['/manufacturer', 'Our craft'],
+      ['/blog', 'Journal'],
+    ];
     if (user) navLinks.push(['/orders', 'My orders']);
   }
   const showBag = role !== 'seller' && role !== 'admin';
@@ -38,28 +68,65 @@ export default function Layout() {
   return (
     <>
       <div className={`site-top${isHome ? ' home' : ''}`}>
-      <div className="announce">Complimentary material samples with every design consultation</div>
+        <div className="announce">Complimentary material samples with every design consultation</div>
 
-      <header className={`top${isHome ? ' over' : ''}`}>
-        <div className="wrap">
-          <Link to="/" className="logo">Bamboo Chick</Link>
-          <nav className="main" aria-label="Main">
-            {navLinks.map(([to, label]) => (
-              <NavLink key={to} to={to} end={to === '/'}>{label}</NavLink>
-            ))}
-          </nav>
-          <div className="head-actions">
-            {user
-              ? <button className="linkish" onClick={doLogout} title={user.email}>Log out</button>
-              : <NavLink to="/login" className="login-link">Log in</NavLink>}
-            {showBag && (
-              <NavLink to="/cart" className="bag">
-                Bag{count > 0 && <span className="badge">{count}</span>}
-              </NavLink>
-            )}
+        <header className={`top${isHome ? ' over' : ''}`}>
+          <div className="wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
+            <Link to="/" className="logo">Bamboo Chick</Link>
+
+            <nav className="main" aria-label="Main">
+              {navLinks.map(([to, label]) => (
+                <NavLink key={to} to={to} end={to === '/'}>{label}</NavLink>
+              ))}
+            </nav>
+
+            {/* Global Search Bar */}
+            <form onSubmit={handleSearch} role="search" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <input
+                type="search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search curtains..."
+                aria-label="Search curtains"
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '20px',
+                  border: '1px solid #ccc',
+                  fontSize: '0.9rem',
+                  outline: 'none',
+                  minWidth: '170px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  color: '#222'
+                }}
+              />
+              <button
+                type="submit"
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '20px',
+                  border: 'none',
+                  backgroundColor: '#2c4c3b',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem'
+                }}
+              >
+                Search
+              </button>
+            </form>
+
+            <div className="head-actions">
+              {user
+                ? <button className="linkish" onClick={doLogout} title={user.email}>Log out</button>
+                : <NavLink to="/login" className="login-link">Log in</NavLink>}
+              {showBag && (
+                <NavLink to="/cart" className="bag">
+                  Bag{count > 0 && <span className="badge">{count}</span>}
+                </NavLink>
+              )}
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
       </div>
 
       <main className={isHome ? 'home' : ''}>
@@ -75,6 +142,7 @@ export default function Layout() {
           <div className="foot-links">
             <div>
               <Link to="/shop">Collection</Link>
+              <Link to="/customize">Customize Order</Link>
               <Link to="/manufacturer">Our craft</Link>
               <Link to="/blog">Journal</Link>
             </div>

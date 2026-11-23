@@ -84,9 +84,10 @@ export default function ProductDetail() {
           </p>
           {settings.discount?.active && <div className="note">Offer: buy {settings.discount.minQty}+ items, get {settings.discount.pct}% off</div>}
 
-          <div className="row" style={{ marginTop: 16 }}>
+          <div className="row" style={{ marginTop: 16, flexWrap: 'wrap' }}>
             <button className="btn" disabled={p.stock < 1} onClick={() => addToCart(false)}>Add to cart</button>
             <button className="btn ghost" disabled={p.stock < 1} onClick={() => addToCart(true)}>Buy now</button>
+            <Link className="btn ghost" to={`/customize/${p._id}`}>Customize size &amp; style</Link>
           </div>
 
           <div className="card pad" style={{ marginTop: 24 }}>

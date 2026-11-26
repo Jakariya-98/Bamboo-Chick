@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import Product from '../models/Product.js';
 import Review from '../models/Review.js';
 import { ApiError, asyncHandler } from '../utils/http.js';
+import { notify } from '../utils/notifications.js';
 
 /** Adds { rating, reviewCount } to each product from visible reviews. */
 async function withRatings(products) {
@@ -38,23 +39,111 @@ export const getProduct = asyncHandler(async (req, res) => {
 // POST /api/products  (seller, admin)
 export const createProduct = asyncHandler(async (req, res) => {
   const { name, category, tone, basePrice, discountPrice, stock, description, images, tags } = req.body;
-  const product = await Product.create({ name, category, tone, basePrice, discountPrice, stock, description, images, tags });
+
+  const product = await Product.create({
+    name, category, tone, basePrice, discountPrice, stock, description, images, tags
+  });
+
+  const notices = [];
+
+  if (req.user.role === 'seller') {
+    notices.push(notify({
+      role: 'buyer',
+      eventKey: `arrival:${product._id}`,
+      title: 'New Arrival',
+      message: `${product.name} is now available.`,
+      link: `/product/${product._id}`
+    }));
+
+    notices.push(notify({
+      role: 'admin',
+      eventKey: `added:${product._id}`,
+      title: 'New product added',
+      message: `${req.user.name} added ${product.name}.`,
+      link: '/seller/products'
+    }));
+  }
+
+  if (product.discountPrice != null && product.discountPrice < product.basePrice) {
+    notices.push(notify({
+      role: 'buyer',
+      eventKey: `offer:${product._id}:initial`,
+      title: 'New offer',
+      message: `${product.name} is available at a discount.`,
+      link: `/product/${product._id}`
+    }));
+  }
+
+  await Promise.all(notices);
+
   res.status(201).json(product);
 });
 
 // PUT /api/products/:id  (seller, admin) — "Change price rate" and "Update stock" stories
 export const updateProduct = asyncHandler(async (req, res) => {
   const allowed = ['name', 'category', 'tone', 'basePrice', 'discountPrice', 'stock', 'description', 'images', 'tags', 'isActive'];
-  const update = Object.fromEntries(Object.entries(req.body).filter(([k]) => allowed.includes(k)));
-  const product = await Product.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true });
+
+  const update = Object.fromEntries(
+    Object.entries(req.body).filter(([k]) => allowed.includes(k))
+  );
+
+  const before = await Product.findById(req.params.id);
+
+  const product = await Product.findByIdAndUpdate(
+    req.params.id,
+    update,
+    { new: true, runValidators: true }
+  );
+
   if (!product) throw new ApiError(404, 'Product not found');
+
+  if (product.isActive && product.discountPrice != null && product.discountPrice < product.basePrice &&
+      (before?.discountPrice !== product.discountPrice || before?.basePrice !== product.basePrice || !before?.isActive)) {
+
+    await notify({
+      role: 'buyer',
+      eventKey: `offer:${product._id}:${product.updatedAt.getTime()}`,
+      title: 'New offer',
+      message: `${product.name} is available at a discount.`,
+      link: `/product/${product._id}`
+    });
+  }
+
+  if (req.user.role === 'seller' && before?.isActive && !product.isActive) {
+    await notify({
+      role: 'admin',
+      eventKey: `removed:${product._id}:${product.updatedAt.getTime()}`,
+      title: 'Product deleted',
+      message: `${req.user.name} removed ${product.name}.`,
+      link: '/seller/products'
+    });
+  }
+
   res.json(product);
 });
 
 // DELETE /api/products/:id  (seller, admin) — soft delete so old orders still make sense
 export const deleteProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findByIdAndUpdate(req.params.id, { isActive: false }, { new: true });
+  const before = await Product.findById(req.params.id);
+
+  const product = await Product.findByIdAndUpdate(
+    req.params.id,
+    { isActive: false },
+    { new: true }
+  );
+
   if (!product) throw new ApiError(404, 'Product not found');
+
+  if (req.user.role === 'seller' && before?.isActive) {
+    await notify({
+      role: 'admin',
+      eventKey: `removed:${product._id}:${product.updatedAt.getTime()}`,
+      title: 'Product deleted',
+      message: `${req.user.name} removed ${product.name}.`,
+      link: '/seller/products'
+    });
+  }
+
   res.json({ message: 'Product removed from the store' });
 });
 

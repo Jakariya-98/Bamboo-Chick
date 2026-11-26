@@ -1,3 +1,4 @@
+import { notify } from '../utils/notifications.js';
 import mongoose from 'mongoose';
 import Order from '../models/Order.js';
 import Product from '../models/Product.js';
@@ -118,6 +119,30 @@ export const createOrder = asyncHandler(async (req, res) => {
     statusHistory: [{ status: 'Pending' }]
   });
 
+  await Promise.all([
+    notify({
+      recipient: order.buyer,
+      eventKey: `placed:${order._id}`,
+      title: 'Order placed',
+      message: `Your order ${order.orderNo} was placed successfully.`,
+      link: `/orders/${order._id}`
+    }),
+    notify({
+      role: 'seller',
+      eventKey: `placed:${order._id}`,
+      title: 'New order',
+      message: `A buyer placed order ${order.orderNo}.`,
+      link: `/orders/${order._id}`
+    }),
+    notify({
+      role: 'admin',
+      eventKey: `sold:${order._id}`,
+      title: 'Product sold — order placed',
+      message: `Order ${order.orderNo}: ${order.items.map(i => `${i.name} × ${i.qty}`).join(', ')}.`,
+      link: `/orders/${order._id}`
+    })
+  ]);
+
   res.status(201).json(order);
 });
 
@@ -143,6 +168,15 @@ export const requestCancel = asyncHandler(async (req, res) => {
   order.cancelReason = req.body.reason || '';
   setStatus(order, 'Cancellation requested');
   await order.save();
+
+  await notify({
+    role: 'seller',
+    eventKey: `cancel-request:${order._id}:${order.statusHistory.length}`,
+    title: 'Cancellation requested',
+    message: `Buyer requested cancellation of ${order.orderNo}.`,
+    link: '/seller/cancellations'
+  });
+
   res.json(order);
 });
 
@@ -163,6 +197,15 @@ export const updateStatus = asyncHandler(async (req, res) => {
   }
   setStatus(order, next);
   await order.save();
+
+  if (next === 'Shipped') await notify({
+    role: 'seller',
+    eventKey: `shipped:${order._id}`,
+    title: 'Product shipped',
+    message: `Order ${order.orderNo} has been shipped.`,
+    link: `/orders/${order._id}`
+  });
+
   res.json(order);
 });
 
@@ -178,5 +221,23 @@ export const decideCancel = asyncHandler(async (req, res) => {
     setStatus(order, 'Pending');
   }
   await order.save();
+
+  if (order.status === 'Cancelled') await Promise.all([
+    notify({
+      recipient: order.buyer,
+      eventKey: `cancelled:${order._id}`,
+      title: 'Order cancelled',
+      message: `Your order ${order.orderNo} has been cancelled.`,
+      link: `/orders/${order._id}`
+    }),
+    notify({
+      role: 'seller',
+      eventKey: `cancelled:${order._id}`,
+      title: 'Order cancelled',
+      message: `Buyer order ${order.orderNo} has been cancelled.`,
+      link: `/orders/${order._id}`
+    })
+  ]);
+
   res.json(order);
 });

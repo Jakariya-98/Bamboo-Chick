@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { api } from '../../api/client.js';
 import useFetch from '../../utils/useFetch.js';
 import { tk } from '../../utils/format.js';
@@ -8,7 +8,10 @@ const thisMonth = () => new Date().toISOString().slice(0, 7);
 
 /** "Monthly product sales report" user story */
 export default function SellerReport() {
-  const [month, setMonth] = useState(thisMonth());
+  const [params, setParams] = useSearchParams();
+  const requested = params.get('month');
+  const month = /^\d{4}-(0[1-9]|1[0-2])$/.test(requested || '') ? requested : thisMonth();
+  const setMonth = (value) => setParams({ month: value });
   const { data, error, loading } = useFetch(() => api.monthlyReport(month), [month]);
   const max = Math.max(1, ...(data?.products || []).map((p) => p.revenue));
 
@@ -22,7 +25,7 @@ export default function SellerReport() {
         </div>
       </div>
       <ErrorBox error={error} />
-      {loading ? <Loading /> : (
+      {loading ? <Loading /> : data ? (
         <>
           <p className="muted" style={{ marginTop: 0 }}>
             {data.month} · {data.orders} orders · {tk(data.productRevenue)} product revenue · {tk(data.grossTotal)} collected incl. VAT &amp; delivery · cancelled orders excluded
@@ -51,7 +54,7 @@ export default function SellerReport() {
             </>
           )}
         </>
-      )}
+      ) : null}
     </div>
   );
 }

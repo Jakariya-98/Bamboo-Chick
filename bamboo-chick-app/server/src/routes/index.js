@@ -10,6 +10,7 @@ import * as reports from '../controllers/reportController.js';
 import * as manufacturer from '../controllers/manufacturerController.js';
 import * as upload from '../controllers/uploadController.js';
 import { uploadMedia } from '../middleware/upload.js';
+import * as notifications from '../controllers/notificationController.js';
 
 const router = Router();
 const staff = [protect, authorize('seller', 'admin')];
@@ -22,6 +23,11 @@ router.get('/health', (_req, res) => res.json({ ok: true, service: 'bamboo-chick
 router.post('/auth/register', auth.register);
 router.post('/auth/login', auth.login);
 router.get('/auth/me', protect, auth.me);
+
+/* ---------- Notifications ---------- */
+router.get('/notifications', protect, notifications.list);
+router.patch('/notifications/read-all', protect, notifications.readAll);
+router.patch('/notifications/:id/read', protect, notifications.read);
 
 /* ---------- Products ---------- */
 router.get('/products', products.listProducts);

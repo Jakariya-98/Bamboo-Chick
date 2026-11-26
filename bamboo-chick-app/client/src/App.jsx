@@ -70,6 +70,8 @@ export default function App() {
           <Route path="reviews" element={<ReviewsTable moderate />} />
           <Route path="manufacturer" element={<AdminManufacturer />} />
           <Route path="users" element={<AdminUsers />} />
+          <Route path="blogs" element={<SellerBlogs />} />
+          <Route path="report" element={<SellerReport />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

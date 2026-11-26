@@ -1,0 +1,122 @@
+.bc-notifications {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.bc-notification-trigger {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.bc-notification-count {
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: #a52c25;
+  color: white;
+  border-radius: 12px;
+  padding: 2px 5px;
+  font-size: 10px;
+}
+
+.bc-notification-panel {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: min(350px, calc(100vw - 24px));
+  max-height: min(65vh, 480px);
+  overflow-y: auto;
+  background: white;
+  color: #20352a;
+  border: 1px solid #d8ded7;
+  border-radius: 8px;
+  box-shadow: 0 8px 25px #0003;
+  z-index: 50;
+  text-align: left;
+}
+
+.bc-notification-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.bc-notification-panel ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bc-notification-panel li {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.bc-notification-panel p {
+  margin: 5px 0;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.bc-notification-panel > p {
+  padding: 12px;
+}
+
+.bc-notification-panel small {
+  color: #536258;
+}
+
+.bc-notification-unread {
+  background: #eef4ed;
+  border-left: 3px solid #315c40;
+}
+
+.bc-notification-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.bc-notification-panel button,
+.head-actions .bc-notification-panel a {
+  border: 0;
+  background: transparent;
+  color: #315c40;
+  font-size: 12px;
+  text-decoration: underline;
+  letter-spacing: normal;
+  text-transform: none;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+.bc-notification-panel button:disabled {
+  opacity: .5;
+  cursor: default;
+}
+
+@media (max-width: 700px) {
+  .bc-notification-panel {
+    position: fixed;
+    top: 100px;
+    right: 12px;
+  }
+}
+
+@media (max-width: 720px) {
+  .head-actions:has(.bc-notifications) {
+    gap: 8px;
+  }
+}

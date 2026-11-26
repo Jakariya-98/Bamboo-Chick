@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import app from './app.js';
+import { monthlyReportNotice } from './utils/notifications.js';
 import { connectDB } from './config/db.js';
 
 const PORT = process.env.PORT || 5000;
@@ -11,6 +12,8 @@ if (!process.env.JWT_SECRET) {
 
 connectDB()
   .then(() => {
+    void monthlyReportNotice();
+    setInterval(() => { void monthlyReportNotice(); }, 60 * 60 * 1000).unref();
     app.listen(PORT, () => console.log(`Bamboo Chick API running on http://localhost:${PORT}/api`));
   })
   .catch((err) => {

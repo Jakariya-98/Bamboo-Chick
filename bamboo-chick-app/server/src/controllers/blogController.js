@@ -1,3 +1,4 @@
+import { notify } from '../utils/notifications.js';
 import Blog from '../models/Blog.js';
 import { ApiError, asyncHandler } from '../utils/http.js';
 
@@ -11,6 +12,15 @@ export const createBlog = asyncHandler(async (req, res) => {
   const { title, body, tone, product, coverImage } = req.body;
   if (!title || !body) throw new ApiError(400, 'Title and content are required');
   const blog = await Blog.create({ title, body, tone, coverImage: coverImage || '', product: product || undefined, author: req.user._id });
+
+  if (req.user.role === 'admin') await notify({
+    role: 'seller',
+    eventKey: `blog:${blog._id}`,
+    title: 'New blog published',
+    message: `Admin published ${blog.title}.`,
+    link: '/blog'
+  });
+
   res.status(201).json(blog);
 });
 

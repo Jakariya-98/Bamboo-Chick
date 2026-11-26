@@ -58,6 +58,11 @@ export const api = {
   login: (email, password) => request('/auth/login', { method: 'POST', body: { email, password } }),
   register: (data) => request('/auth/register', { method: 'POST', body: data }),
   me: () => request('/auth/me'),
+  
+  // notifications
+  notifications: () => request('/notifications'),
+  readNotification: (id) => request(`/notifications/${id}/read`, { method: 'PATCH' }),
+  readAllNotifications: () => request('/notifications/read-all', { method: 'PATCH' }),
 
   // products
   products: (query) => request('/products', { query }),

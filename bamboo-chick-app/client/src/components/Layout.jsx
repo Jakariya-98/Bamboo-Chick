@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import NotificationBell from './NotificationBell.jsx';
 import { useCart } from '../context/CartContext.jsx';
 
 /** Announcement bar, header, footer and the phone tab bar — links change by role. */
@@ -49,6 +50,7 @@ export default function Layout() {
             ))}
           </nav>
           <div className="head-actions">
+            {user && <NotificationBell key={user._id || user.id || user.email} />}
             {user
               ? <button className="linkish" onClick={doLogout} title={user.email}>Log out</button>
               : <NavLink to="/login" className="login-link">Log in</NavLink>}
